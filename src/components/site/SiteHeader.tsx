@@ -17,8 +17,8 @@ const NAV = [
 export function SiteHeader() {
   return (
     <header className="border-b border-line bg-paper/95">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3.5">
-        <Link href="/" className="mr-2 flex items-center gap-2 rounded-sm" aria-label={`${PRODUCT_NAME} home`}>
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-5 sm:py-3.5">
+        <Link href="/" className="flex shrink-0 items-center gap-2 rounded-sm sm:mr-2" aria-label={`${PRODUCT_NAME} home`}>
           <Wordmark />
         </Link>
         <nav aria-label="Main" className="hidden flex-1 xl:block">
@@ -32,16 +32,16 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
-        <div className="ml-auto flex items-center gap-2">
-          <Link href="/sign-in" className="whitespace-nowrap rounded-md px-2.5 py-2 text-[0.95rem] font-semibold text-ink hover:bg-sunken">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+          <Link href="/sign-in" className="whitespace-nowrap rounded-md px-2 py-2 text-[0.95rem] font-semibold text-ink hover:bg-sunken sm:px-2.5">
             Sign in
           </Link>
-          <Link href="/sign-up" className={buttonClass("primary", "sm", "min-h-10 px-3.5")}>
+          <Link href="/sign-up" className={buttonClass("primary", "sm", "min-h-10 whitespace-nowrap px-3 sm:px-3.5")}>
             Start free
           </Link>
           <details className="group relative xl:hidden">
-            <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1.5 rounded-md border border-line-strong px-3 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
-              <Menu aria-hidden className="size-4" /> Menu
+            <summary className="flex min-h-10 min-w-10 cursor-pointer list-none items-center justify-center gap-1.5 rounded-md border border-line-strong px-2.5 text-sm font-semibold text-ink [&::-webkit-details-marker]:hidden">
+              <Menu aria-hidden className="size-4" /> <span className="sr-only sm:not-sr-only">Menu</span>
             </summary>
             <nav aria-label="Main (mobile)" className="absolute right-0 z-40 mt-2 w-64 rounded-lg border border-line bg-surface p-2 shadow-lift">
               <ul>

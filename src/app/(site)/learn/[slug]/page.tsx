@@ -8,6 +8,11 @@ import { GUIDE_BOX } from "@/lib/brand";
 import { GUIDES, getGuide } from "@/lib/content/guides";
 import { formatIsoDate } from "@/lib/domain/extract";
 
+// Every valid path is prerendered by generateStaticParams; unknown ones return a real 404.
+// Params are awaited at the top so notFound() can set the status, so the segment opts out of
+// instant-navigation validation instead of streaming behind a Suspense boundary.
+export const instant = false;
+
 export function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
 }
