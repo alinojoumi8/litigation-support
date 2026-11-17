@@ -12,7 +12,7 @@ export default function GetHelpPage() {
     <>
       <MarketingHeader title="Get help now" lede="If something is happening now or very soon, get help today." />
       <Prose>
-        <div className="max-w-3xl rounded-xl border-2 border-brick-ink bg-brick-tint p-6 text-brick-ink">
+        <div className="max-w-3xl rounded-xl border-2 border-ochre-line bg-ochre-tint p-6 text-ochre-ink">
           <p className="text-xl font-bold">If you or someone else is in danger, call 911.</p>
           <p className="mt-1">If you are in custody, ask for duty counsel or call Legal Aid Ontario.</p>
         </div>

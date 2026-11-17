@@ -32,7 +32,7 @@ export function HeroTimeline() {
           ))}
         </ol>
       </div>
-      <div className="settle-in relative -mt-4 ml-6 mr-2 rounded-lg border border-ochre-line bg-ochre-tint p-4 text-ochre-ink shadow-lift sm:ml-16 sm:-mr-4">
+      <div className="settle-in relative -mt-4 ml-6 mr-2 rounded-lg border border-ochre-line bg-ochre-tint p-4 text-ochre-ink shadow-lift sm:ml-16 sm:mr-0">
         <p className="flex items-center gap-2 font-semibold">
           <Flag aria-hidden className="size-4" /> Possible date mismatch: Doc 0142 p.3 vs Doc 0388 p.1
         </p>

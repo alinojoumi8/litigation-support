@@ -6,6 +6,7 @@ import { getData, getLocalRepository } from "../data";
 import type { User } from "../domain/types";
 import { newId, nowIso } from "../ids";
 import { hashPassword, verifyPassword } from "./password";
+import { requestTime } from "../request";
 
 /**
  * Auth provider interface. Local auth (default) keeps scrypt password hashes
@@ -83,6 +84,7 @@ class LocalAuthProvider implements AuthProvider {
   }
 
   async currentUserId() {
+    await requestTime();
     const token = (await cookies()).get(SESSION_COOKIE)?.value;
     if (!token || token.length > 100) return null;
     const s = await getLocalRepository().getSession(tokenHash(token));
@@ -130,6 +132,7 @@ class SupabaseAuthProvider implements AuthProvider {
     await db.auth.signOut();
   }
   async currentUserId() {
+    await requestTime();
     const db = await this.client();
     // getUser() validates the JWT with Supabase Auth; getSession() alone would trust the cookie.
     const { data } = await db.auth.getUser();

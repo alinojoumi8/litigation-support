@@ -58,7 +58,13 @@ export class MockAIProvider implements AIProvider {
     const seen = new Set<string>();
     const dedupedFacts = keyFacts.filter((f) => (seen.has(f.text) ? false : (seen.add(f.text), true))).slice(0, 12);
 
-    const events = extractEventsFromPages(input.pages, [...people]).map((e) => ({
+    const emailEvents: SummaryOutput["events"] = [];
+    if (input.emailMeta?.date) {
+      const d = findDates(input.emailMeta.date)[0];
+      const sender = input.emailMeta.from.replace(/<[^>]*>/g, "").replace(/"/g, "").trim() || "unknown sender";
+      if (d) emailEvents.push({ date: d.iso, datePrecision: d.precision, description: `Email "${input.emailMeta.subject || "(no subject)"}" sent by ${sender}`, page: 1, quote: null, people: [...people].filter((p) => sender.includes(p)) });
+    }
+    const events = [...emailEvents, ...extractEventsFromPages(input.pages, [...people])].map((e) => ({
       date: e.date,
       datePrecision: e.datePrecision,
       description: e.description,

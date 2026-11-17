@@ -2,6 +2,7 @@ import "server-only";
 import { getConfig } from "../config";
 import { createLocalAdapters, type LocalRepository } from "./local";
 import type { BlobStore, Repository } from "./repository";
+import { requestTime } from "../request";
 
 export interface DataAdapters {
   repo: Repository;
@@ -10,6 +11,7 @@ export interface DataAdapters {
 
 /** Chooses the data adapter from DATA_BACKEND. Local is the default and needs no setup. */
 export async function getData(): Promise<DataAdapters> {
+  await requestTime();
   const c = getConfig();
   if (c.DATA_BACKEND === "supabase") {
     if (!c.NEXT_PUBLIC_SUPABASE_URL || !c.NEXT_PUBLIC_SUPABASE_ANON_KEY) {

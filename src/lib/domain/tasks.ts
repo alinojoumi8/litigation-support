@@ -47,7 +47,7 @@ export function buildWeeklyTasks(i: TaskInput): PrepTask[] {
   for (const w of i.warnings.slice(0, 2)) {
     tasks.push({
       key: `deadline-${w.deadline.id}`,
-      title: `Check what you need ready for "${w.deadline.title}"`,
+      title: `Get ready for: ${w.deadline.title}`,
       why: w.message,
       minutes: 15,
       href: `${base}/deadlines`,

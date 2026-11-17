@@ -74,6 +74,8 @@ export interface CaseFile {
   briefExportedAt: string | null;
   /** Review statuses for computed money flags, keyed by flag fingerprint. */
   moneyFlagStatus: Record<string, FlagStatus>;
+  /** User-written background and questions for expert prep packages. */
+  expertDrafts?: Partial<Record<"examiner" | "accountant", { background: string; questions: string }>>;
 }
 
 export interface Membership {

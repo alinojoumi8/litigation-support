@@ -1,6 +1,7 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { getAI } from "../ai";
+import { MockAIProvider } from "../ai/mock";
 import { guardDiscrepancies, guardSummary } from "../ai/guard";
 import { DISCREPANCY_PROMPT_VERSION, SUMMARY_PROMPT_VERSION, type DiscrepancyDocInput } from "../ai/provider";
 import type { DataAdapters } from "../data";
@@ -30,6 +31,7 @@ export async function ingestFile(
   file: { filename: string; bytes: Uint8Array; kind: FileKind; mimeType: string },
   meta: IngestMeta,
   preExtracted?: Extraction,
+  opts: { localOnly?: boolean } = {},
 ): Promise<DocumentRecord> {
   const extraction = preExtracted ?? (await (await getExtractor()).extract(file.bytes, file.kind));
   const docId = newId("doc");
@@ -64,14 +66,15 @@ export async function ingestFile(
   const pages: PageText[] = extraction.pages.map((text, i) => ({ id: `${docId}:${i + 1}`, caseId, docId, page: i + 1, text }));
   await data.repo.insertMany("pages", pages);
   logEvent("document.ingested", { caseId, docId, pages: pages.length, bytes: file.bytes.length, kind: file.kind });
-  if (pages.some((p) => p.text.trim().length > 0)) await summarizeDocument(data, caseId, doc, pages);
+  if (pages.some((p) => p.text.trim().length > 0)) await summarizeDocument(data, caseId, doc, pages, opts);
   return doc;
 }
 
 /** Summarize one document and add its dated events to the timeline (as unconfirmed AI drafts). */
-export async function summarizeDocument(data: DataAdapters, caseId: string, doc: DocumentRecord, pages?: PageText[]) {
+export async function summarizeDocument(data: DataAdapters, caseId: string, doc: DocumentRecord, pages?: PageText[], opts: { localOnly?: boolean } = {}) {
   const pageRows = (pages ?? (await data.repo.list("pages", caseId)).filter((p) => p.docId === doc.id)).sort((a, b) => a.page - b.page);
-  const ai = await getAI();
+  // Sample data always uses the local extractor: deterministic, and never sent to an external AI.
+  const ai = opts.localOnly ? new MockAIProvider() : await getAI();
   const input = { title: doc.title, docType: doc.docType, pages: pageRows.map((p) => ({ page: p.page, text: p.text })), emailMeta: doc.emailMeta };
   const raw = await ai.summarize(input);
   const { output, notes } = guardSummary(raw, input.pages);
@@ -143,7 +146,7 @@ function factsFor(doc: DocumentRecord, pages: PageText[]): DiscrepancyDocInput {
  * survive re-runs (matched by fingerprint). Unreviewed flags that no longer
  * apply are removed.
  */
-export async function refreshFlags(data: DataAdapters, caseId: string): Promise<{ total: number; added: number }> {
+export async function refreshFlags(data: DataAdapters, caseId: string, opts: { localOnly?: boolean } = {}): Promise<{ total: number; added: number }> {
   const [docs, pages, existing] = await Promise.all([data.repo.list("documents", caseId), data.repo.list("pages", caseId), data.repo.list("flags", caseId)]);
   const pagesByDoc = new Map<string, PageText[]>();
   for (const p of pages) pagesByDoc.set(p.docId, [...(pagesByDoc.get(p.docId) ?? []), p]);
@@ -160,7 +163,7 @@ export async function refreshFlags(data: DataAdapters, caseId: string): Promise<
   const drafts: (ReturnType<typeof findDiscrepancies>[number] & { createdBy: Flag["createdBy"]; provider: string | null; model: string | null })[] =
     findDiscrepancies(facts).map((d) => ({ ...d, createdBy: "rules" as const, provider: null, model: null }));
 
-  const ai = await getAI();
+  const ai = opts.localOnly ? new MockAIProvider() : await getAI();
   if (ai.external) {
     const inputs = docs.map((d) => factsFor(d, pagesByDoc.get(d.id) ?? []));
     const cands = guardDiscrepancies(await ai.findDiscrepancies(inputs), inputs);

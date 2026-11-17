@@ -11,7 +11,7 @@ type Variant = "primary" | "secondary" | "quiet" | "danger";
 type Size = "md" | "sm";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-md font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-55 whitespace-nowrap";
+  "inline-flex items-center justify-center gap-2 rounded-md text-center font-semibold leading-snug transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-55";
 const variants: Record<Variant, string> = {
   primary: "bg-spruce text-white hover:bg-spruce-deep shadow-card",
   secondary: "bg-surface text-ink border border-line-strong hover:border-ink-3 hover:bg-paper",

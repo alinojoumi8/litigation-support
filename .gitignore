@@ -21,5 +21,12 @@ __pycache__/
 *.log
 
 # Private legal files (never commit real case data)
-private/
-cases/
+/private/
+/cases/
+
+# Local demo data store (encrypted case data, never commit)
+.data/
+
+# Test and tooling output
+coverage/
+*.tsbuildinfo
